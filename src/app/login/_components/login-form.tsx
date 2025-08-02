@@ -1,76 +1,91 @@
 "use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useActionState } from "react";
 
-const initialState = {
-  email: "",
-  password: "",
-};
+export const FormSchema = z.object({
+  email: z.email(),
+  password: z.string(),
+});
 
-const createUser = async (data: FormData) => {
-  console.log({ data });
-  //   const email = data.get("email");
-  //   const password = data.get("password");
+export type LoginReqBody = z.infer<typeof FormSchema>;
 
-  //   // Simulate a server-side action
-  //   if (!email || !password) {
-  //     throw new Error("Email and password are required");
-  //   }
+interface Props {
+  onSubmit: (data: LoginReqBody) => Promise<void>;
+}
 
-  return { message: "User created successfully" };
-};
+export const LoginForm = (props: Props) => {
+  const form = useForm<LoginReqBody>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-export const LoginForm = () => {
-  const [state, formAction, pending] = useActionState(createUser, initialState);
+  const onSubmit = async (data: LoginReqBody) => {
+    props.onSubmit(data).catch((error) => {
+      console.error("Login failed:", error);
+      form.setError("root", {
+        type: "manual",
+        message: error.message,
+      });
+    });
+  };
 
-  console.log({ state });
+  const requestError = form.formState.errors.root;
 
   return (
-    <div className={"flex flex-col gap-6"}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={formAction}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input id="password" type="password" name="password" required />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={pending}>
-                  Login
-                </Button>
-              </div>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="you@example.com" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="••••••••" {...field} />
+              </FormControl>
+              <FormDescription>This is your secret password.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          Submit
+        </Button>
+        {requestError && <FormMessage>{requestError.message}</FormMessage>}
+      </form>
+    </Form>
   );
 };
