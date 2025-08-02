@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 
 export const FormSchema = z.object({
   email: z.email(),
-  password: z.string(),
+  password: z.string().trim().min(1, { message: "Field is required" }),
 });
 
 export type LoginReqBody = z.infer<typeof FormSchema>;
@@ -38,7 +38,8 @@ export const LoginForm = (props: Props) => {
 
   const onSubmit = async (data: LoginReqBody) => {
     props.onSubmit(data).catch((error) => {
-      console.error("Login failed:", error);
+      // workaround for try/catch bug
+      if (error?.message === "NEXT_REDIRECT") return;
       form.setError("root", {
         type: "manual",
         message: error.message,
