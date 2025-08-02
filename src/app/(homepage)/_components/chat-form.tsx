@@ -1,17 +1,17 @@
 "use client";
-import * as React from "react";
-import { ArrowUpIcon } from "lucide-react";
-import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { DefaultChatTransport } from "ai";
+import { ArrowUpIcon } from "lucide-react";
+import * as React from "react";
 import { useForm } from "react-hook-form";
+import z from "zod";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export const FormSchema = z.object({
   message: z.string().trim().min(1),
