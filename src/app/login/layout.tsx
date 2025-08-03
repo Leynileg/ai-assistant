@@ -3,6 +3,17 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 
+/**
+ * Description placeholder
+ *
+ * @export
+ * @async
+ * @param {{
+ *   children: React.ReactNode;
+ * }} param0
+ * @param {React.ReactNode} param0.children
+ * @returns {unknown}
+ */
 export default async function LoginLayout({
   children,
 }: {

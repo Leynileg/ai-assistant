@@ -1,2 +1,1 @@
-export { LoginForm } from "./login-form";
-export type { LoginReqBody } from "./login-form";
+export { LoginForm, type LoginReqBody } from "./login-form";
