@@ -1,9 +1,9 @@
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 
-import type { LoginReqBody } from "./_components";
-import { LoginForm } from "./_components";
+import { LoginForm, type LoginReqBody } from "./_components";
 
 export default async function LoginPage() {
   const handleSubmit = async (formData: LoginReqBody) => {
@@ -23,3 +23,8 @@ export default async function LoginPage() {
 
   return <LoginForm onSubmit={handleSubmit} />;
 }
+
+export const metadata: Metadata = {
+  title: "Login",
+  description: "Login to your account",
+};

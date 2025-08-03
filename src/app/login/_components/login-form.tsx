@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -15,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export const FormSchema = z.object({
   email: z.email(),
@@ -37,7 +39,7 @@ export const LoginForm = (props: Props) => {
   });
 
   const onSubmit = async (data: LoginReqBody) => {
-    props.onSubmit(data).catch((error) => {
+    await props.onSubmit(data).catch((error) => {
       // workaround for try/catch bug
       if (error?.message === "NEXT_REDIRECT") return;
       form.setError("root", {
@@ -51,41 +53,47 @@ export const LoginForm = (props: Props) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="you@example.com" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
-              </FormControl>
-              <FormDescription>This is your secret password.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          Submit
-        </Button>
-        {requestError && <FormMessage>{requestError.message}</FormMessage>}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 mx-auto">
+        <fieldset disabled={form.formState.isSubmitting} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="you@example.com" {...field} />
+                </FormControl>
+                <FormDescription>This is your secret email.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="••••••••" {...field} />
+                </FormControl>
+                <FormDescription>This is your secret password.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Loader2Icon
+              className={cn(
+                "animate-spin hidden",
+                form.formState.isSubmitting && "block"
+              )}
+            />
+            Log in
+          </Button>
+          {requestError && <FormMessage>{requestError.message}</FormMessage>}
+        </fieldset>
       </form>
     </Form>
   );

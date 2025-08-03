@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { headers } from "next/headers";
 
 import { auth } from "@/lib/auth";
@@ -9,5 +10,23 @@ export default async function Home() {
     headers: await headers(),
   });
 
-  return <ChatCard userEmail={session!.user.email} />;
+  const handleLogout = async () => {
+    "use server";
+    await auth.api.signOut({
+      headers: await headers(),
+    });
+  };
+
+  return (
+    <ChatCard
+      userName={session!.user.name}
+      userEmail={session!.user.email}
+      onLogoutClick={handleLogout}
+    />
+  );
 }
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Welcome to the home page",
+};

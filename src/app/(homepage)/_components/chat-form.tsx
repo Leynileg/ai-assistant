@@ -13,12 +13,12 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-export const FormSchema = z.object({
+const FormSchema = z.object({
   message: z.string().trim().min(1),
 });
 
 export const ChatForm = () => {
-  const { messages, sendMessage } = useChat({
+  const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
@@ -34,7 +34,7 @@ export const ChatForm = () => {
 
   const handleSubmit = async () => {
     const message = form.getValues("message");
-    form.reset();
+    form.setValue("message", "");
     await sendMessage({
       parts: [{ type: "text", text: message }],
     });
@@ -61,38 +61,45 @@ export const ChatForm = () => {
               })}
             </div>
           ))}
+          {status === "submitted" && (
+            <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-muted animate-pulse">
+              <span>...</span>
+            </div>
+          )}
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="sticky bottom-0 z-10 bg-card px-6 py-4 mt-auto">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
             className="relative w-full"
           >
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className="flex-1 pr-10"
-                      placeholder="Type your message..."
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              size="icon"
-              className="absolute top-1/2 right-2 size-6 -translate-y-1/2 rounded-full"
-              disabled={!form.formState.isValid}
-            >
-              <ArrowUpIcon className="size-3.5" />
-              <span className="sr-only">Send</span>
-            </Button>
+            <fieldset disabled={form.formState.isSubmitting}>
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="flex-1 pr-10"
+                        placeholder="Type your message..."
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                size="icon"
+                className="absolute top-1/2 right-2 size-6 -translate-y-1/2 rounded-full"
+                disabled={!form.formState.isValid}
+              >
+                <ArrowUpIcon className="size-3.5" />
+                <span className="sr-only">Send</span>
+              </Button>
+            </fieldset>
           </form>
         </Form>
       </CardFooter>

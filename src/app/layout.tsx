@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider, ThemeSelector } from "@/components/theme";
 
 import "./globals.css";
 
@@ -22,9 +22,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -38,9 +38,10 @@ export default function RootLayout({
         >
           <main>
             <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-              <div className="w-full max-w-3xl ">{children}</div>
+              <div className="w-full max-w-3xl">{children}</div>
             </div>
           </main>
+          <ThemeSelector />
         </ThemeProvider>
       </body>
     </html>

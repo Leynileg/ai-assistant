@@ -12,8 +12,6 @@ export default async function LoginLayout({
     headers: await headers(),
   });
 
-  console.log("AAA".repeat(50));
-
   if (session) {
     redirect("/");
   }
