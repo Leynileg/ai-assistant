@@ -16,7 +16,7 @@ export const ThemeSelector = () => {
   const { setTheme } = useTheme();
 
   return (
-    <div className="fixed top-6 right-6">
+    <div className="fixed top-2 md:top-6 right-6">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon">
